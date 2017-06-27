@@ -7,11 +7,36 @@ def translate(url)
   JSON.parse(RestClient.get(url))
 end
 
+# def make_character_array
+#   count = 1
+#   character_array = []
+#   while count < 88
+#     character_url = "http://www.swapi.co/api/people/" + count.to_s + "/"
+#     character_array << translate(character_url)
+#     #binding.pry
+#     count += 1
+#   end
+#   #character_array
+#   binding.pry
+# end
 
-def get_character_movies_from_api(character)
+# def find_character_page(character)
+#   count = 1
+#   character_array = []
+#   until character == translate("http://www.swapi.co/api/people/" + count.to_s + "/")
+#    # character_url = "http://www.swapi.co/api/people/" + count.to_s + "/"
+#     character_array << translate(character_url)
+#     count += 1
+#   end
+# end
+
+
+def get_character_movies_from_api(character, api = 'http://www.swapi.co/api/people/')
   #make the web request
   #all_characters = RestClient.get('http://www.swapi.co/api/people/')
-  character_hash = translate('http://www.swapi.co/api/people/')
+  character_hash = translate(api)
+  #binding.pry
+
   
   # iterate over the character hash to find the collection of `films` for the given
   #   `character`
@@ -28,8 +53,12 @@ def get_character_movies_from_api(character)
       film_array = intial_bio["films"]
     end
   end
-  film_array.map! do |url|
-    translate(url)
+  if film_array == []
+    get_character_movies_from_api(character, character_hash["next"])
+  else
+    film_array.map do |url|
+      translate(url)
+    end
   end
 end
 
